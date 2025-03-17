@@ -1,18 +1,26 @@
 ﻿@using EventManager.Models
-@inject NavigationManager Navigation
 
-<div class="event-card">
-    <h3>@Event.Name</h3>
-    <p><strong>Data:</strong> @Event.Date.ToShortDateString()</p>
-    <p><strong>Local:</strong> @Event.Location</p>
-    <button class="btn btn-primary" @onclick="NavigateToDetails">Ver Detalhes</button>
-</div>
+@if (Event is not null)
+{
+    <div class="event-card">
+        <h3>@Event.Name</h3>
+        <p><strong>Data:</strong> @Event.Date.ToShortDateString()</p>
+        <p><strong>Local:</strong> @Event.Location</p>
+
+        <NavLink class="btn btn-primary" href="@($"/event-details/{Event.Id}")">
+            Ver Detalhes
+        </NavLink>
+
+        <NavLink class="btn btn-success ms-2" href="@($"/register/{Event.Id}")">
+            Registrar-se
+        </NavLink>
+    </div>
+}
+else
+{
+    <p>Carregando evento...</p>
+}
 
 @code {
-    [Parameter] public EventModel Event { get; set; }
-
-    private void NavigateToDetails()
-    {
-        Navigation.NavigateTo($"/event-details/{Event.Id}");
-    }
+    [Parameter] public EventModel? Event { get; set; }
 }

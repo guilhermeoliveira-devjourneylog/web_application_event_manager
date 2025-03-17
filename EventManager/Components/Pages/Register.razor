@@ -1,0 +1,57 @@
+﻿@page "/register/{eventId:int}"
+@using EventManager.Models
+@inject NavigationManager Navigation
+
+<h2>Registro no Evento</h2>
+
+@if (selectedEvent == null)
+{
+    <p>Carregando evento...</p>
+}
+else
+{
+    <div class="event-registration">
+        <h3>Evento: @selectedEvent.Name</h3>
+        <p><strong>Data:</strong> @selectedEvent.Date.ToLongDateString()</p>
+        <p><strong>Local:</strong> @selectedEvent.Location</p>
+
+        <form>
+            <div class="form-group">
+                <label for="name">Nome:</label>
+                <input type="text" id="name" class="form-control" required />
+            </div>
+
+            <div class="form-group">
+                <label for="email">E-mail:</label>
+                <input type="email" id="email" class="form-control" required />
+            </div>
+
+            <button type="submit" class="btn btn-success">Confirmar Registro</button>
+        </form>
+
+        <NavLink class="btn btn-secondary mt-3" href="/events">
+            Voltar para Lista de Eventos
+        </NavLink>
+    </div>
+}
+
+@code {
+    [Parameter] public int eventId { get; set; }
+    private EventModel? selectedEvent;
+
+    protected override void OnInitialized()
+    {
+        selectedEvent = GetEventById(eventId);
+    }
+
+    private EventModel? GetEventById(int id)
+    {
+        var events = new List<EventModel>
+        {
+            new EventModel { Id = 1, Name = "Tech Conference 2025", Date = new DateTime(2025, 06, 20), Location = "São Paulo" },
+            new EventModel { Id = 2, Name = "Startup Meetup", Date = new DateTime(2025, 07, 10), Location = "Rio de Janeiro" }
+        };
+
+        return events.FirstOrDefault(e => e.Id == id);
+    }
+}
