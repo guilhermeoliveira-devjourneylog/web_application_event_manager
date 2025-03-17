@@ -1,6 +1,12 @@
 ﻿@using EventManager.Models
 
-@if (Event is not null)
+@if (Event is null || string.IsNullOrWhiteSpace(Event.Name) || string.IsNullOrWhiteSpace(Event.Location))
+{
+    <div class="event-card error">
+        <p class="text-danger">Erro: Dados do evento inválidos.</p>
+    </div>
+}
+else
 {
     <div class="event-card">
         <h3>@Event.Name</h3>
@@ -16,11 +22,7 @@
         </NavLink>
     </div>
 }
-else
-{
-    <p>Carregando evento...</p>
-}
 
 @code {
-    [Parameter] public EventModel? Event { get; set; }
+    [Parameter, EditorRequired] public EventModel? Event { get; set; }
 }

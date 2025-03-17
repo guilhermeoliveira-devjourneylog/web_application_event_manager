@@ -5,7 +5,10 @@
 
 @if (selectedEvent == null)
 {
-    <p>Carregando evento...</p>
+    <p class="text-danger">Erro: Evento não encontrado.</p>
+    <NavLink class="btn btn-secondary mt-2" href="/events">
+        Voltar para Lista de Eventos
+    </NavLink>
 }
 else
 {

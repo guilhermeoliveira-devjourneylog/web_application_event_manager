@@ -13,24 +13,34 @@ else if (events.Count == 0)
 }
 else
 {
-    <div class="events-list">
-        @foreach (var eventItem in events)
-        {
-            <EventCard Event="eventItem" />
-        }
-    </div>
+    @foreach (var eventItem in events)
+    {
+        <EventCard Event="eventItem" />
+    }
 }
 
 @code {
-    private List<EventModel> events = new(); 
+    private List<EventModel>? events;
 
     protected override async Task OnInitializedAsync()
     {
         await Task.Delay(500);
-        events = new()
+        events = GenerateEvents(10);
+    }
+
+    private List<EventModel> GenerateEvents(int count)
+    {
+        var list = new List<EventModel>();
+        for (int i = 1; i <= count; i++)
         {
-            new EventModel { Id = 1, Name = "Tech Conference 2025", Date = new DateTime(2025, 06, 20), Location = "São Paulo" },
-            new EventModel { Id = 2, Name = "Startup Meetup", Date = new DateTime(2025, 07, 10), Location = "Rio de Janeiro" }
-        };
+            list.Add(new EventModel
+                {
+                    Id = i,
+                    Name = $"Evento {i}",
+                    Date = DateTime.Now.AddDays(i),
+                    Location = $"Local {i}"
+                });
+        }
+        return list;
     }
 }
