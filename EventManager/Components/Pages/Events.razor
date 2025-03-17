@@ -1,0 +1,36 @@
+﻿@page "/events"
+@using EventManager.Models
+
+<h2>Eventos Disponíveis</h2>
+
+@if (events is null)
+{
+    <p>Carregando eventos...</p>
+}
+else if (events.Count == 0)
+{
+    <p>Nenhum evento encontrado.</p>
+}
+else
+{
+    <div class="events-list">
+        @foreach (var eventItem in events)
+        {
+            <EventCard Event="eventItem" />
+        }
+    </div>
+}
+
+@code {
+    private List<EventModel> events;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(500); // Simula carregamento dos eventos
+        events = new()
+        {
+            new EventModel { Id = 1, Name = "Tech Conference 2025", Date = new DateTime(2025, 06, 20), Location = "São Paulo" },
+            new EventModel { Id = 2, Name = "Startup Meetup", Date = new DateTime(2025, 07, 10), Location = "Rio de Janeiro" }
+        };
+    }
+}
