@@ -1,15 +1,18 @@
 ﻿@page "/events"
+@using EventManager.Components.Shared
 @using EventManager.Models
+@using EventManager.Data
+@inject EventData EventData
 
 <h2>Eventos Disponíveis</h2>
 
-@if (events is null)
+@if (events == null)
 {
     <p>Carregando eventos...</p>
 }
 else if (events.Count == 0)
 {
-    <p>Nenhum evento encontrado.</p>
+    <p class="text-danger">Nenhum evento encontrado.</p>
 }
 else
 {
@@ -20,27 +23,13 @@ else
 }
 
 @code {
-    private List<EventModel>? events;
+    private List<EventModel>? events = null;
 
     protected override async Task OnInitializedAsync()
     {
         await Task.Delay(500);
-        events = GenerateEvents(10);
-    }
 
-    private List<EventModel> GenerateEvents(int count)
-    {
-        var list = new List<EventModel>();
-        for (int i = 1; i <= count; i++)
-        {
-            list.Add(new EventModel
-                {
-                    Id = i,
-                    Name = $"Evento {i}",
-                    Date = DateTime.Now.AddDays(i),
-                    Location = $"Local {i}"
-                });
-        }
-        return list;
+        events = await EventData.GetAllEventsAsync();
+        InvokeAsync(StateHasChanged);
     }
 }

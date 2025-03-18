@@ -1,57 +1,69 @@
 ﻿@page "/register/{eventId:int}"
 @using EventManager.Models
+@using EventManager.Services
+@using EventManager.Data
 @inject NavigationManager Navigation
+@inject UserSessionService UserSessionService
+@inject AttendanceService AttendanceService
+@inject EventData EventData
 
-<h2>Registro no Evento</h2>
+<h2>Inscrição no Evento</h2>
 
-@if (selectedEvent == null)
+@if (selectedEvent is null)
 {
-    <p>Carregando evento...</p>
+    <p class="text-danger">Erro: Evento não encontrado.</p>
+    <NavLink class="btn btn-secondary mt-2" href="/events">Voltar</NavLink>
 }
 else
 {
-    <div class="event-registration">
-        <h3>Evento: @selectedEvent.Name</h3>
-        <p><strong>Data:</strong> @selectedEvent.Date.ToLongDateString()</p>
-        <p><strong>Local:</strong> @selectedEvent.Location</p>
+    <EditForm Model="@registrationModel" OnValidSubmit="SubmitRegistration" FormName="event-registration-form">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
 
-        <form>
-            <div class="form-group">
-                <label for="name">Nome:</label>
-                <input type="text" id="name" class="form-control" required />
-            </div>
+        <div class="form-group">
+            <label>Nome</label>
+            <InputText class="form-control" @bind-Value="registrationModel.Name" />
+            <ValidationMessage For="@(() => registrationModel.Name)" />
+        </div>
 
-            <div class="form-group">
-                <label for="email">E-mail:</label>
-                <input type="email" id="email" class="form-control" required />
-            </div>
+        <div class="form-group">
+            <label>Email</label>
+            <InputText class="form-control" @bind-Value="registrationModel.Email" />
+            <ValidationMessage For="@(() => registrationModel.Email)" />
+        </div>
 
-            <button type="submit" class="btn btn-success">Confirmar Registro</button>
-        </form>
+        <button type="submit" class="btn btn-primary">Registrar</button>
+    </EditForm>
 
-        <NavLink class="btn btn-secondary mt-3" href="/events">
-            Voltar para Lista de Eventos
-        </NavLink>
-    </div>
+    <NavLink class="btn btn-secondary mt-2" href="/events">Voltar</NavLink>
 }
 
 @code {
     [Parameter] public int eventId { get; set; }
+
     private EventModel? selectedEvent;
 
-    protected override void OnInitialized()
+    [SupplyParameterFromForm]
+    public RegistrationModel registrationModel { get; set; } = new();
+
+    protected override async Task OnParametersSetAsync()
     {
-        selectedEvent = GetEventById(eventId);
+        selectedEvent = await EventData.GetEventByIdAsync(eventId);
+        if (selectedEvent is null)
+            Console.WriteLine("Erro: Evento não encontrado durante inicialização.");
     }
 
-    private EventModel? GetEventById(int id)
+    private async Task SubmitRegistration()
     {
-        var events = new List<EventModel>
+        if (selectedEvent is null)
         {
-            new EventModel { Id = 1, Name = "Tech Conference 2025", Date = new DateTime(2025, 06, 20), Location = "São Paulo" },
-            new EventModel { Id = 2, Name = "Startup Meetup", Date = new DateTime(2025, 07, 10), Location = "Rio de Janeiro" }
-        };
+            Console.WriteLine("Erro: Evento inexistente.");
+            return;
+        }
 
-        return events.FirstOrDefault(e => e.Id == id);
+        await AttendanceService.MarkAttendanceAsync(eventId, registrationModel.Name);
+        await UserSessionService.SetUserAsync(registrationModel.Name, registrationModel.Email);
+
+        Navigation.NavigateTo($"/attendance-tracker/{eventId}");
     }
 }

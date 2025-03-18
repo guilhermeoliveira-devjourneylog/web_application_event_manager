@@ -3,7 +3,7 @@
 @if (Event is null || string.IsNullOrWhiteSpace(Event.Name) || string.IsNullOrWhiteSpace(Event.Location))
 {
     <div class="event-card error">
-        <p class="text-danger">Erro: Dados do evento inválidos.</p>
+        <p class="text-danger">Erro: Evento inválido.</p>
     </div>
 }
 else
@@ -24,5 +24,12 @@ else
 }
 
 @code {
-    [Parameter, EditorRequired] public EventModel? Event { get; set; }
+    [Parameter, EditorRequired]
+    public EventModel Event { get; set; } = new EventModel
+        {
+            Id = 0,
+            Name = "Evento Indefinido",
+            Date = DateTime.MinValue,
+            Location = "Local Desconhecido"
+        };
 }
