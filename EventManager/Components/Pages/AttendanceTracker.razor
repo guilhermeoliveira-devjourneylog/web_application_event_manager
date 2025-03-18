@@ -1,0 +1,37 @@
+﻿@page "/attendance-tracker/{eventId:int}"
+
+@using EventManager.Services
+@inject AttendanceService AttendanceService
+
+<h2>Presença no Evento</h2>
+
+@if (attendanceList == null)
+{
+    <p>Carregando...</p>
+}
+else if (attendanceList.Count == 0)
+{
+    <p>Nenhum participante registrado.</p>
+}
+else
+{
+    <ul>
+        @foreach (var attendee in attendanceList)
+        {
+            <li>@attendee</li>
+        }
+    </ul>
+}
+
+<NavLink class="btn btn-secondary mt-2" href="/events">Voltar</NavLink>
+
+@code {
+    [Parameter] public int eventId { get; set; }
+    private List<string>? attendanceList;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(100); // Simula carregamento
+        attendanceList = await AttendanceService.GetAttendanceAsync(eventId);
+    }
+}

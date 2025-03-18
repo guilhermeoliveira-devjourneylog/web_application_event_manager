@@ -1,0 +1,35 @@
+﻿@using EventManager.Models
+
+@if (Event is null || string.IsNullOrWhiteSpace(Event.Name) || string.IsNullOrWhiteSpace(Event.Location))
+{
+    <div class="event-card error">
+        <p class="text-danger">Erro: Evento inválido.</p>
+    </div>
+}
+else
+{
+    <div class="event-card">
+        <h3>@Event.Name</h3>
+        <p><strong>Data:</strong> @Event.Date.ToShortDateString()</p>
+        <p><strong>Local:</strong> @Event.Location</p>
+
+        <NavLink class="btn btn-primary" href="@($"/event-details/{Event.Id}")">
+            Ver Detalhes
+        </NavLink>
+
+        <NavLink class="btn btn-success ms-2" href="@($"/register/{Event.Id}")">
+            Registrar-se
+        </NavLink>
+    </div>
+}
+
+@code {
+    [Parameter, EditorRequired]
+    public EventModel Event { get; set; } = new EventModel
+        {
+            Id = 0,
+            Name = "Evento Indefinido",
+            Date = DateTime.MinValue,
+            Location = "Local Desconhecido"
+        };
+}
