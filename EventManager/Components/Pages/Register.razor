@@ -7,12 +7,12 @@
 @inject AttendanceService AttendanceService
 @inject EventData EventData
 
-<h2>Inscrição no Evento</h2>
+<h2>Event Registration</h2>
 
 @if (selectedEvent is null)
 {
-    <p class="text-danger">Erro: Evento não encontrado.</p>
-    <NavLink class="btn btn-secondary mt-2" href="/events">Voltar</NavLink>
+    <p class="text-danger">Error: Event not found.</p>
+    <NavLink class="btn btn-secondary mt-2" href="/events">Back to Events</NavLink>
 }
 else
 {
@@ -21,7 +21,7 @@ else
         <ValidationSummary />
 
         <div class="form-group">
-            <label>Nome</label>
+            <label>Name</label>
             <InputText class="form-control" @bind-Value="registrationModel.Name" />
             <ValidationMessage For="@(() => registrationModel.Name)" />
         </div>
@@ -32,10 +32,10 @@ else
             <ValidationMessage For="@(() => registrationModel.Email)" />
         </div>
 
-        <button type="submit" class="btn btn-primary">Registrar</button>
+        <button type="submit" class="btn btn-primary">Register</button>
     </EditForm>
 
-    <NavLink class="btn btn-secondary mt-2" href="/events">Voltar</NavLink>
+    <NavLink class="btn btn-secondary mt-2" href="/events">Back to Events</NavLink>
 }
 
 @code {
@@ -50,25 +50,21 @@ else
     {
         selectedEvent = await EventData.GetEventByIdAsync(eventId);
         if (selectedEvent is null)
-            Console.WriteLine("Erro: Evento não encontrado durante inicialização.");
+            Console.WriteLine("Error: Event not found during initialization.");
     }
 
     private async Task SubmitRegistration()
     {
         if (selectedEvent is null)
         {
-            Console.WriteLine("Erro: Evento inexistente.");
+            Console.WriteLine("Error: Event does not exist.");
             return;
         }
 
-        // Marque presença no evento
         await AttendanceService.MarkAttendanceAsync(eventId, registrationModel.Name);
 
-        // Guarde temporariamente o usuário no UserSessionService (SEM JavaScript Interop!)
         UserSessionService.SetCurrentUser(registrationModel.Name, registrationModel.Email);
 
-        // Faça redirect para página interativa
         Navigation.NavigateTo($"/attendance-tracker/{eventId}");
     }
-
 }

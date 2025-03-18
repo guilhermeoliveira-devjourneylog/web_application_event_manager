@@ -1,28 +1,30 @@
 ﻿@page "/event-details/{eventId:int}"
 @using EventManager.Models
+@using EventManager.Data
+@inject EventData EventData
 
-<h2>Detalhes do Evento</h2>
+<h2>Event Details</h2>
 
-@if (selectedEvent == null)
+@if (selectedEvent is null)
 {
-    <p class="text-danger">Erro: Evento não encontrado.</p>
+    <p class="text-danger">Error: Event not found.</p>
     <NavLink class="btn btn-secondary mt-2" href="/events">
-        Voltar para Lista de Eventos
+        Back to Events List
     </NavLink>
 }
 else
 {
     <div class="event-details">
         <h3>@selectedEvent.Name</h3>
-        <p><strong>Data:</strong> @selectedEvent.Date.ToLongDateString()</p>
-        <p><strong>Local:</strong> @selectedEvent.Location</p>
+        <p><strong>Date:</strong> @selectedEvent.Date.ToLongDateString()</p>
+        <p><strong>Location:</strong> @selectedEvent.Location</p>
 
         <NavLink class="btn btn-success" href="@($"/register/{eventId}")">
-            Registrar-se
+            Register
         </NavLink>
 
         <NavLink class="btn btn-secondary mt-2" href="/events">
-            Voltar para Lista de Eventos
+            Back to Events List
         </NavLink>
     </div>
 }
@@ -31,19 +33,8 @@ else
     [Parameter] public int eventId { get; set; }
     private EventModel? selectedEvent;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        selectedEvent = GetEventById(eventId);
-    }
-
-    private EventModel? GetEventById(int id)
-    {
-        var events = new List<EventModel>
-        {
-            new EventModel { Id = 1, Name = "Tech Conference 2025", Date = new DateTime(2025, 06, 20), Location = "São Paulo" },
-            new EventModel { Id = 2, Name = "Startup Meetup", Date = new DateTime(2025, 07, 10), Location = "Rio de Janeiro" }
-        };
-
-        return events.FirstOrDefault(e => e.Id == id);
+        selectedEvent = await EventData.GetEventByIdAsync(eventId);
     }
 }
