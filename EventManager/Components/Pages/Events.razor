@@ -4,15 +4,15 @@
 @using EventManager.Data
 @inject EventData EventData
 
-<h2>Eventos Disponíveis</h2>
+<h2>Available Events</h2>
 
 @if (events == null)
 {
-    <p>Carregando eventos...</p>
+    <p>Loading events...</p>
 }
 else if (events.Count == 0)
 {
-    <p class="text-danger">Nenhum evento encontrado.</p>
+    <p class="text-danger">No events found.</p>
 }
 else
 {
@@ -30,6 +30,6 @@ else
         await Task.Delay(500);
 
         events = await EventData.GetAllEventsAsync();
-        InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged);
     }
 }

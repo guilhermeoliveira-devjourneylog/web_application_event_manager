@@ -3,15 +3,11 @@
 @using EventManager.Services
 @inject AttendanceService AttendanceService
 
-<h2>Presença no Evento</h2>
+<h2>Event Attendance</h2>
 
-@if (attendanceList == null)
+@if (attendanceList is null || !attendanceList.Any())
 {
-    <p>Carregando...</p>
-}
-else if (attendanceList.Count == 0)
-{
-    <p>Nenhum participante registrado.</p>
+    <p class="text-danger">No attendees found for this event.</p>
 }
 else
 {
@@ -23,7 +19,7 @@ else
     </ul>
 }
 
-<NavLink class="btn btn-secondary mt-2" href="/events">Voltar</NavLink>
+<NavLink class="btn btn-secondary mt-2" href="/events">Back to Events</NavLink>
 
 @code {
     [Parameter] public int eventId { get; set; }
@@ -31,7 +27,6 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        await Task.Delay(100); // Simula carregamento
         attendanceList = await AttendanceService.GetAttendanceAsync(eventId);
     }
 }
