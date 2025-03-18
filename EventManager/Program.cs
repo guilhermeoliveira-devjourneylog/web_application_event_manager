@@ -4,18 +4,15 @@ using EventManager.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-// Corrigido para Scoped (era Singleton antes, o que causava o erro)
-builder.Services.AddScoped<UserSessionService>();
-builder.Services.AddScoped<AttendanceService>();
 builder.Services.AddSingleton<EventData>();
+builder.Services.AddSingleton<AttendanceService>();
+builder.Services.AddScoped<UserSessionService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);

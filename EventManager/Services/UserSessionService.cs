@@ -13,12 +13,17 @@ namespace EventManager.Services
             _sessionStorage = sessionStorage;
         }
 
+
         public UserModel? CurrentUser => _currentUser;
 
         public async Task SetUserAsync(string name, string email)
         {
             _currentUser = new UserModel { Name = name, Email = email };
             await _sessionStorage.SetAsync("currentUser", _currentUser);
+        }
+        public void SetCurrentUser(string name, string email)
+        {
+            _currentUser = new UserModel { Name = name, Email = email };
         }
 
         public async Task<UserModel?> GetUserAsync()

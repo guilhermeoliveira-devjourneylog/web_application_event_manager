@@ -61,9 +61,14 @@ else
             return;
         }
 
+        // Marque presença no evento
         await AttendanceService.MarkAttendanceAsync(eventId, registrationModel.Name);
-        await UserSessionService.SetUserAsync(registrationModel.Name, registrationModel.Email);
 
+        // Guarde temporariamente o usuário no UserSessionService (SEM JavaScript Interop!)
+        UserSessionService.SetCurrentUser(registrationModel.Name, registrationModel.Email);
+
+        // Faça redirect para página interativa
         Navigation.NavigateTo($"/attendance-tracker/{eventId}");
     }
+
 }
